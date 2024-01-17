@@ -75,10 +75,11 @@ local Translations = {
         command_transfervehicle_amount = "Valor da venda (optional)",
     }
 }
-if GetConvar('qb_locale', 'en') == 'pt' then
+
+Locale:registerLocale(false, 'pt', function()
     Lang = Locale:new({
         phrases = Translations,
         warnOnMissing = true,
         fallbackLang = Lang,
     })
-end
+end)
