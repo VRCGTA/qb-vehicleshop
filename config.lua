@@ -4,6 +4,7 @@ Config.Commission = 0.10                              -- Percent that goes to sa
 Config.FinanceCommission = 0.05                       -- Percent that goes to sales person from a finance sale 5%
 Config.PaymentWarning = 10                            -- time in minutes that player has to make payment before repo
 Config.PaymentInterval = 24                           -- time in hours between payment being due
+Config.PaymentExtendHour = 12                         -- 支払ったら延長する時間
 Config.MinimumDown = 10                               -- minimum percentage allowed down
 Config.MaximumPayments = 24                           -- maximum payments allowed
 Config.PreventFinanceSelling = false                  -- allow/prevent players from using /transfervehicle if financed

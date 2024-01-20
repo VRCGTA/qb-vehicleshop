@@ -73,6 +73,7 @@ local Translations = {
         command_transfervehicle = "Gift or sell your vehicle",
         command_transfervehicle_help = "ID of buyer",
         command_transfervehicle_amount = "Sell amount (optionnal)",
+        command_checkfinance = "Check finance this vehicle"
     }
 }
 

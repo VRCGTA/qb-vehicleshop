@@ -142,7 +142,8 @@ RegisterNetEvent('qb-vehicleshop:server:financePayment', function(paymentAmount,
     local plate = vehData.vehiclePlate
     paymentAmount = tonumber(paymentAmount)
     local minPayment = tonumber(vehData.paymentAmount)
-    local timer = (Config.PaymentInterval * 60)
+    local timer = (v.financetime - ((os.time() - playTime) / 60)) + (Config.PaymentExtendHour * 60)
+    financetimer[citizenid] = os.time()
     local newBalance, newPaymentsLeft, newPayment = calculateNewFinance(paymentAmount, vehData)
     if newBalance > 0 then
         if player and paymentAmount >= minPayment then
@@ -491,5 +492,21 @@ QBCore.Commands.Add('transfervehicle', Lang:t('general.command_transfervehicle')
         TriggerClientEvent('QBCore:Notify', buyerId, Lang:t('success.boughtfor') .. comma_value(sellAmount), 'success')
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.buyertoopoor'), 'error')
+    end
+end)
+
+QBCore.Commands.Add('checkfinance', Lang:t('general.command_checkfinance'), {}, false, function(source, args)
+    local src = source
+    local ped = GetPlayerPed(src)
+    local vehicle = GetVehiclePedIsIn(ped, false)
+    if vehicle == 0 then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.notinveh'), 'error') end
+    local plate = QBCore.Shared.Trim(GetVehicleNumberPlateText(vehicle))
+    if not plate then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.vehinfo'), 'error') end
+    local player = QBCore.Functions.GetPlayer(src)
+    local row = MySQL.single.await('SELECT * FROM player_vehicles WHERE plate = ?', { plate })
+    if row.balance > 0 then
+        TriggerClientEvent('QBCore:Notify', src, "残高: $" .. row.balance .. " 残り時間: " .. tostring(math.ceil(row.financetime / 60)) .. "時間", 'success')
+    else
+        TriggerClientEvent('QBCore:Notify', src, "既に全額支払い済みです", 'success')
     end
 end)
