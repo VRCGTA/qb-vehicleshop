@@ -144,13 +144,14 @@ RegisterNetEvent('qb-vehicleshop:server:financePayment', function(paymentAmount,
     local minPayment = tonumber(vehData.paymentAmount)
     local playTime = financetimer[player.PlayerData.citizenid]
     local row = MySQL.single.await('SELECT * FROM player_vehicles WHERE plate = ?', { plate })
+    local newBalance, newPaymentsLeft, newPayment = calculateNewFinance(paymentAmount, vehData)
+    local diffPaymentsLeft = row.paymentsleft - newPaymentsLeft
     if playTime then
-        timer = (row.financetime - ((os.time() - playTime) / 60)) + (Config.PaymentExtendHour * 60)
+        timer = (row.financetime - ((os.time() - playTime) / 60)) + (Config.PaymentExtendHour * 60 * diffPaymentsLeft)
     else
-        timer = row.financetime + (Config.PaymentExtendHour * 60)
+        timer = row.financetime + (Config.PaymentExtendHour * 60 * diffPaymentsLeft)
     end
     financetimer[player.PlayerData.citizenid] = os.time()
-    local newBalance, newPaymentsLeft, newPayment = calculateNewFinance(paymentAmount, vehData)
     if newBalance > 0 then
         if player and paymentAmount >= minPayment then
             if cash >= paymentAmount then
